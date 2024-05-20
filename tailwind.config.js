@@ -10,5 +10,12 @@ module.exports = {
       },
     },
   },
-  plugins: [],
+  plugins: [
+    require("@tailwindcss/typography")({
+      // className: "remove-default",
+    }),
+  ],
+  // corePlugins: {
+  //   preflight: false,
+  // },
 };

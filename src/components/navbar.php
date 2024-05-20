@@ -13,12 +13,17 @@
             </a>
         </nav>
         <div class="flex gap-3">
-            <button type="button" class="btn-secondary">
-                Signup
-            </button>
-            <button type="button" class="btn-primary">
-                Login
-            </button>
+            <a href="../views/register.php">
+                <button type="button" class="btn-secondary">
+                    Signup
+                </button>
+            </a>
+            <a href="../views/login.php">
+                <button type="button" class="btn-primary">
+                    Login
+                </button>
+
+            </a>
         </div>
     </div>
 </header>
