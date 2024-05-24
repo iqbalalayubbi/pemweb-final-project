@@ -15,10 +15,18 @@ class Connection
             $this->pdo = new PDO($this->dsn, $this->username, $this->password);
             $this->pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
             $this->pdo->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
-            echo "connection established";
+            // echo "connection established";
         } catch (PDOException $e) {
             echo 'Connection failed: ' . $e->getMessage();
             exit();
         }
+    }
+
+    public function executeQuery($sql)
+    {
+        $query = $this->pdo->query($sql);
+        // $query->execute();
+        // return $query;
+        return $query;
     }
 }

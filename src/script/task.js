@@ -1,9 +1,14 @@
+const formData = document.getElementById("form-data");
+
 const editor = new EditorJS({
-  onReady: () => {
+  onReady: async () => {
     new DragDrop(editor);
+    editor.render(loadBlock());
   },
   onChange: (api, event) => {
-    console.log("editor changed");
+    setTimeout(() => {
+      saveBlock();
+    }, 3000);
   },
   placeholder: "Enter your task...",
   holder: "editorjs",
@@ -32,33 +37,15 @@ const editor = new EditorJS({
       class: Marker,
     },
   },
-  data: {
-    time: 1716031395744,
-    blocks: [
-      {
-        id: "QMs1Z71sMM",
-        type: "paragraph",
-        data: {
-          text: "ini merupakan sebuah tugas yang harus diselesaikan<br>",
-        },
-      },
-      {
-        id: "F9lNPRLbGc",
-        type: "header",
-        data: { text: "Pengembangan Perangkaat Lunak 3", level: 3 },
-      },
-    ],
-    version: "2.29.1",
-  },
 });
 
 const KEY = "SECRET";
-const formData = document.getElementById("form-data");
-function saveData() {
+function saveBlock() {
+  console.log("save data");
   editor
     .save()
     .then((blocksData) => {
-      allBlock = JSON.stringify(blocksData);
+      const allBlock = JSON.stringify(blocksData);
       localStorage.setItem(KEY, allBlock);
       //   formData.submit();
     })
@@ -67,4 +54,24 @@ function saveData() {
     });
   // save data to local storage
   // store from local storage to database
+}
+
+function loadBlock() {
+  const allBlock = JSON.parse(localStorage.getItem(KEY));
+  return allBlock;
+}
+
+formData.addEventListener("submit", (event) => {
+  event.preventDefault();
+});
+
+function sendData() {
+  $.ajax({
+    type: "POST",
+    url: "data.php",
+    data: { number: 10 },
+    success: function (data) {
+      alert(data);
+    },
+  });
 }

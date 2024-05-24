@@ -3,6 +3,7 @@
 // require_once '../model/User.php';
 // $user = new User();
 // var_dump($user->getData());
+// var_dump($_POST);
 ?>
 
 
@@ -44,16 +45,14 @@
         </div>
     </div>
 
-
-
     <div id="editorjs" class="editorjs-container"></div>
 
     <form method="post" id="form-data" class="hidden">
-        <input type="hidden" name="blocks" value="ini block">
-        <!-- <button type="button" onclick="saveData()">save data</button> -->
+        <input type="hidden" name="blocks" value="">
+        <!-- <button type="button" name="button" onclick="sendData()">Save Data</button> -->
     </form>
 
-
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
     <!-- editor js files -->
     <script src="../library/editorjs.js"></script>
     <script src="../library/header.js"></script>
