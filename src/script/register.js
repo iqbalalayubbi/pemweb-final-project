@@ -1,36 +1,91 @@
-const formRegister = document.getElementById("form-register");
-const password = document.querySelector('input[name="password"]');
-const confirmPassword = document.querySelector(
-  'input[name="confirm-password"]'
-);
-const correctIcon = document.getElementById("correct-icon");
-const wrongIcon = document.getElementById("wrong-icon");
+import { User } from "./User.js";
 
-function matchPassword() {
-  if (password.value !== confirmPassword.value) {
-    wrongIcon.style.display = "inline-block";
-    correctIcon.style.display = "none";
+const usernameInput = $("input[name='username']");
+const passwordInput = $("input[name='password']");
+const confirmPassInput = $("input[name='confirm-password']");
+const submitButton = $("button[name='submit']");
+const user = new User(usernameInput, passwordInput);
+
+usernameInput.on("input", async function (e) {
+  const { success, message } = await user.checkUsername(usernameInput.val());
+  user.setUsername(usernameInput.val());
+
+  if (success) {
+    setInputStatus(
+      ".username-status",
+      message,
+      "text-green-600",
+      "text-red-600"
+    );
   } else {
-    wrongIcon.style.display = "none";
-    correctIcon.style.display = "inline-block";
+    setInputStatus(
+      ".username-status",
+      message,
+      "text-red-600",
+      "text-green-600"
+    );
   }
+
+  checkUserValid();
+});
+
+passwordInput.on("input", function (e) {
+  const { success, message } = user.checkPassword(passwordInput.val());
+  user.setPassword(passwordInput.val());
+
+  if (success) {
+    setInputStatus(
+      ".password-status",
+      message,
+      "text-green-600",
+      "text-red-600"
+    );
+  } else {
+    setInputStatus(
+      ".password-status",
+      message,
+      "text-red-600",
+      "text-green-600"
+    );
+  }
+
+  checkUserValid();
+});
+
+confirmPassInput.on("input", function (event) {
+  const { success, message } = user.checkConfirmPassword(
+    confirmPassInput.val()
+  );
+  user.setConfirmPassword(confirmPassInput.val());
+
+  if (success) {
+    setInputStatus(
+      ".confirm-status",
+      message,
+      "text-green-600",
+      "text-red-600"
+    );
+  } else {
+    setInputStatus(
+      ".confirm-status",
+      message,
+      "text-red-600",
+      "text-green-600"
+    );
+  }
+
+  checkUserValid();
+});
+
+function setInputStatus(element, text, addClass, removeClass) {
+  $(element).html(text);
+  $(element).addClass(addClass);
+  $(element).removeClass(removeClass);
 }
 
-function checkUsername() {
-  $.ajax({
-    type: "POST",
-    url: "../controller/checkUsername.php",
-    data: { username: $("input[name='username']").val() },
-    success: function (result) {
-      if (result) {
-        $(".username-status").html("username already exists");
-        $(".username-status").addClass("text-red-600");
-        $(".username-status").removeClass("text-green-600");
-      } else {
-        $(".username-status").html("username available");
-        $(".username-status").addClass("text-green-600");
-        $(".username-status").removeClass("text-red-600");
-      }
-    },
-  });
+async function checkUserValid() {
+  const userValid = await user.isUserValid();
+  userValid
+    ? submitButton.attr("disabled", false)
+    : submitButton.attr("disabled", true);
 }
