@@ -1,9 +1,9 @@
 <?php
-// require_once '../model/Connection.php';
-// require_once '../model/User.php';
-// $user = new User();
-// var_dump($user->getData());
-// var_dump($_POST);
+session_start();
+
+if (!isset($_SESSION["username"])) {
+    header("Location:../views/login.php");
+}
 ?>
 
 
@@ -38,7 +38,7 @@
                 </div>
                 <div id="nav-footer-titlebox">
                     <a id="nav-footer-title" href="https://codepen.io/uahnbu/pens/public" target="_blank">@yourname</a>
-                    <a href="index.php"><span id="nav-footer-subtitle">Logout</span></a>
+                    <a href="#" onclick="confirmLogout(event)"><span id="nav-footer-subtitle">Logout</span></a>
                 </div>
                 <label for="nav-footer-toggle"><i class="fas fa-caret-up"></i></label>
             </div>
@@ -61,6 +61,16 @@
     <script src="../library/simple-image.js"></script>
     <script src="../library/marker.js"></script>
     <script src="../library/drag-drop.js"></script>
+    <script src="../library/raw.js"></script>
+    <script src="../library/embed.js"></script>
+    <script src="../library/code.js"></script>
+    <script src="../library/button.js"></script>
+    <script src="../library/undo.js"></script>
+    <script src="../library/warning.js"></script>
+    <script src="../library/text-color.js"></script>
+
+    <!-- sweet alert -->
+    <script src='https://cdn.jsdelivr.net/npm/sweetalert2@11'></script>
     <!-- local js -->
     <script src="../script/task.js"></script>
 </body>
