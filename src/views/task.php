@@ -4,6 +4,11 @@ session_start();
 if (!isset($_SESSION["username"])) {
     header("Location:../views/login.php");
 }
+// get all blocks from database
+require_once "../model/Connection.php";
+require_once "../model/Block.php";
+$block = new Block();
+$result = $block->getAllBlock($_SESSION["username"]);
 ?>
 
 
@@ -20,7 +25,7 @@ if (!isset($_SESSION["username"])) {
 
 <body>
     <!-- navbar -->
-    <div id="nav-bar">
+    <!-- <div id="nav-bar">
         <input id="nav-toggle" type="checkbox" />
         <div id="nav-header"><a id="nav-title" href="https://codepen.io" target="_blank">E<i class="fab fa-codepen"></i>asy Task</a><label for="nav-toggle"><span id="nav-toggle-burger"></span></label>
             <hr />
@@ -43,7 +48,35 @@ if (!isset($_SESSION["username"])) {
                 <label for="nav-footer-toggle"><i class="fas fa-caret-up"></i></label>
             </div>
         </div>
-    </div>
+    </div> -->
+
+    <nav>
+        <div class="main">
+            <div class="icon">Easy Task</div>
+            <div class="profile">
+                <img src="../assets/ilustration.svg" alt="" width="50">
+                <span class="username-container" data-username="<?= $_SESSION['username'] ?>"><?= $_SESSION["username"] ?></span>
+            </div>
+            <h1 class="title">Projects</h1>
+            <div class="projects">
+                <?php foreach ($result as $block) : ?>
+                    <button class="btn btn-project" role="button" data-blockId="<?= $block["block_id"] ?>">
+                        <img src="../assets/tutor-1.svg" alt="" width="30">
+                        <?= $block["block_title"] ?>
+                    </button>
+                <?php endforeach; ?>
+            </div>
+            <button class="btn btn-add" role="button">
+                <img src="../assets/icons/add.svg" alt="" width="30">
+                New Projcet
+            </button>
+        </div>
+
+        <button class="btn btn-logout" role="button">
+            <img src="../assets/icons/logout.svg" alt="" width="30">
+            Logout
+        </button>
+    </nav>
 
     <div id="editorjs" class="editorjs-container"></div>
 
@@ -71,8 +104,11 @@ if (!isset($_SESSION["username"])) {
 
     <!-- sweet alert -->
     <script src='https://cdn.jsdelivr.net/npm/sweetalert2@11'></script>
+    <!-- moment js -->
+    <script src="../library/moment.js"></script>
+
     <!-- local js -->
-    <script src="../script/task.js"></script>
+    <script src="../script/task.js" type="module"></script>
 </body>
 
 </html>
