@@ -51,12 +51,32 @@ h6 {
 /* editor js */
 .editorjs-container {
   margin-top: 2em;
-  margin-left: 5em;
+  margin-left: 12em;
 }
 
 .ce-block__content,
 .ce-toolbar__content {
   max-width: 800px;
+}
+
+/* default view */
+.default-view {
+  position: absolute;
+  top: 0;
+  right: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.2em;
+  width: 80%;
+}
+
+.default-view h1 {
+  color: var(--primary);
+}
+
+.default-view img {
+  margin-top: 5em;
 }
 
 /* navbar */
@@ -81,7 +101,7 @@ nav {
   background-color: rgb(255, 255, 255);
   top: 0;
   left: 0;
-  width: 15%;
+  width: 20%;
   height: 100vh;
   box-shadow: 10px 0px 10px -15px rgba(0, 0, 0, 0.75);
 }
@@ -115,6 +135,8 @@ h1.title {
   display: flex;
   flex-direction: column;
   align-items: center;
+  height: 200px;
+  overflow-y: scroll;
   gap: 1em;
 }
 
@@ -133,6 +155,23 @@ h1.title {
 
 .projects .btn-project {
   background-color: var(--primary);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.projects .btn-project .setting-project:hover {
+  opacity: 0.5;
+}
+
+.btn-project .contents {
+  gap: 1em;
+  display: flex;
+  align-items: center;
+}
+
+.btn-project .contents span {
+  font-size: 0.2em;
 }
 
 .projects .project-active {
@@ -142,10 +181,18 @@ h1.title {
 .projects .btn-project:hover {
   background-color: var(--secondary);
   transition: all 0.3s ease-in;
+  cursor: pointer;
 }
 
 .btn-add {
   margin-top: 5em;
+  background-color: rgb(127, 127, 127);
+  color: white;
+}
+
+.btn-add:hover {
+  cursor: pointer;
+  transition: all 0.2s ease-in;
   background-color: rgb(192, 192, 192);
   color: rgb(36, 36, 36);
 }
@@ -153,4 +200,10 @@ h1.title {
 .btn-logout {
   background-color: #d52222;
   margin-bottom: 5em;
+}
+
+.btn-logout:hover {
+  background-color: #991616;
+  transition: all 0.2s ease;
+  cursor: pointer;
 }
