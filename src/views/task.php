@@ -24,32 +24,6 @@ $result = $block->getAllBlock($_SESSION["username"]);
 </head>
 
 <body>
-    <!-- navbar -->
-    <!-- <div id="nav-bar">
-        <input id="nav-toggle" type="checkbox" />
-        <div id="nav-header"><a id="nav-title" href="https://codepen.io" target="_blank">E<i class="fab fa-codepen"></i>asy Task</a><label for="nav-toggle"><span id="nav-toggle-burger"></span></label>
-            <hr />
-        </div>
-        <div id="nav-content">
-            <div class="nav-button"><i class="fas fa-fire"></i><span>Project1</span></div>
-            <div class="nav-button"><i class="fas fa-fire"></i><span>Project2</span></div>
-            <hr />
-            <div id="nav-content-highlight"></div>
-        </div><input id="nav-footer-toggle" type="checkbox" />
-        <div id="nav-footer">
-            <div id="nav-footer-heading">
-                <div id="nav-footer-avatar">
-                    <img src="https://gravatar.com/avatar/4474ca42d303761c2901fa819c4f2547" />
-                </div>
-                <div id="nav-footer-titlebox">
-                    <a id="nav-footer-title" href="https://codepen.io/uahnbu/pens/public" target="_blank">@yourname</a>
-                    <a href="#" onclick="confirmLogout(event)"><span id="nav-footer-subtitle">Logout</span></a>
-                </div>
-                <label for="nav-footer-toggle"><i class="fas fa-caret-up"></i></label>
-            </div>
-        </div>
-    </div> -->
-
     <nav>
         <div class="main">
             <div class="icon">Easy Task</div>
@@ -61,24 +35,33 @@ $result = $block->getAllBlock($_SESSION["username"]);
             <div class="projects">
                 <?php foreach ($result as $block) : ?>
                     <button class="btn btn-project" role="button" data-blockId="<?= $block["block_id"] ?>">
-                        <img src="../assets/tutor-1.svg" alt="" width="30">
-                        <?= $block["block_title"] ?>
+                        <div class="contents">
+                            <img src="../assets/tutor-1.svg" alt="" width="20">
+                            <span class="title"><?= $block["block_title"] ?></span>
+                        </div>
+                        <iconify-icon icon="solar:menu-dots-bold" width="20" height="20" class="setting-project" data-title="<?= $block["block_title"] ?>" data-blockId="<?= $block["block_id"] ?>"></iconify-icon>
                     </button>
                 <?php endforeach; ?>
             </div>
             <button class="btn btn-add" role="button">
-                <img src="../assets/icons/add.svg" alt="" width="30">
+                <img src="../assets/icons/add.svg" alt="" width="15">
                 New Projcet
             </button>
         </div>
 
         <button class="btn btn-logout" role="button">
-            <img src="../assets/icons/logout.svg" alt="" width="30">
+            <img src="../assets/icons/logout.svg" alt="" width="15">
             Logout
         </button>
     </nav>
 
     <div id="editorjs" class="editorjs-container"></div>
+    <div class="default-view" style="display: flex;">
+        <img src="../assets/default-view.png" alt="" width="300">
+        <h1>Easy Task</h1>
+        <h3>Make and Manage Your Project From Here</h3>
+        <p>help anyone for create the best project that can be</p>
+    </div>
 
     <form method="post" id="form-data" class="hidden">
         <input type="hidden" name="blocks" value="">
@@ -106,6 +89,8 @@ $result = $block->getAllBlock($_SESSION["username"]);
     <script src='https://cdn.jsdelivr.net/npm/sweetalert2@11'></script>
     <!-- moment js -->
     <script src="../library/moment.js"></script>
+    <!-- iconify -->
+    <script src="https://code.iconify.design/iconify-icon/2.1.0/iconify-icon.min.js"></script>
 
     <!-- local js -->
     <script src="../script/task.js" type="module"></script>

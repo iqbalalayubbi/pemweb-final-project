@@ -37,6 +37,33 @@ class Block extends Connection
         }
     }
 
+    public function updateTitle($blockData)
+    {
+        $block_id =  $blockData["blockId"];
+        $block_title =  $blockData["blockTitle"];
+        $username =  $blockData["username"];
+
+        try {
+            $result = $this->executeQuery("UPDATE block SET block_title = '$block_title' WHERE block_id = '$block_id' AND username='$username'");
+            return $result->rowCount();
+        } catch (\Throwable $th) {
+            return $th->getMessage();
+        }
+    }
+
+    public function deleteBlock($blockData)
+    {
+        $block_id =  $blockData["blockId"];
+        $username =  $blockData["username"];
+
+        try {
+            $result = $this->executeQuery("DELETE FROM block WHERE block_id = '$block_id' AND username='$username'");
+            return $result->rowCount();
+        } catch (\Throwable $th) {
+            return $th->getMessage();
+        }
+    }
+
     public function checkBlock($block_id)
     {
         try {

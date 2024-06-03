@@ -9,6 +9,8 @@ export class Block extends EditorJS {
     configuration.saveBlock = this.saveBlock;
     configuration.getAllBlock = this.getAllBlock;
     configuration.updateBlock = this.updateBlock;
+    configuration.updateTitle = this.updateTitle;
+    configuration.deleteBlock = this.deleteBlock;
     configuration.onChange = updateBlock;
   }
   async renderBlock(blockId, username) {
@@ -41,6 +43,26 @@ export class Block extends EditorJS {
       async: true,
     });
 
+    return result;
+  }
+
+  async updateTitle(data) {
+    const result = await $.ajax({
+      type: "POST",
+      url: "../controller/updateTitle.php",
+      data,
+      async: true,
+    });
+    return result;
+  }
+
+  async deleteBlock(data) {
+    const result = await $.ajax({
+      type: "POST",
+      url: "../controller/deleteBlock.php",
+      data,
+      async: true,
+    });
     return result;
   }
 
