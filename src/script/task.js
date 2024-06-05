@@ -22,6 +22,7 @@ $(".btn-add").click(createBlock);
 $(".btn-project").click(setActive);
 $(".projects").click(setActive);
 $(".btn-logout").click(confirmLogout);
+$(".search-project").on("input", searchProject);
 
 async function renderBlock() {
   await editor.isReady;
@@ -114,8 +115,8 @@ async function updateUI() {
           <iconify-icon icon="solar:menu-dots-bold" width="20" height="20" class="setting-project" data-title=${block.block_title} data-blockId=${block.block_id}></iconify-icon>
       </button>    
     `;
-    $(".projects").html(htmlElements);
   });
+  $(".projects").html(htmlElements);
   checkBlockActive();
 }
 
@@ -145,6 +146,46 @@ async function deleteBlock(blockId) {
     username: $(".username-container").attr("data-username"),
   };
   await editor.configuration.deleteBlock(data);
+}
+
+async function searchProject() {
+  // ambil semua component project
+  await updateUI();
+  const titleElements = $(".btn-project .contents span");
+  const idElements = $(".btn-project");
+  const inputVal = $(".search-project").val();
+
+  const projectFound = [];
+  for (let i = 0; i < titleElements.length; i++) {
+    if (titleElements.eq(i).text().toLowerCase().startsWith(inputVal)) {
+      const dataProject = {
+        id: idElements.eq(i).attr("data-blockId"),
+        title: titleElements.eq(i).text(),
+      };
+      projectFound.push(dataProject);
+    }
+  }
+
+  let htmlElements = "";
+
+  if (projectFound.length <= 0) {
+    htmlElements =
+      "<span style='color: red; font-weight: bold;'>Project not found</span>";
+    return $(".projects").html(htmlElements);
+  }
+
+  projectFound.forEach((blockData) => {
+    htmlElements += `
+    <button class="btn btn-project" role="button" data-blockId=${blockData.id}>
+        <div class="contents">
+            <img src="../assets/tutor-1.svg" alt="" width="20">
+            <span class="title">${blockData.title}</span>
+        </div>
+        <iconify-icon icon="solar:menu-dots-bold" width="20" height="20" class="setting-project" data-title=${blockData.title} data-blockId=${blockData.id}></iconify-icon>
+    </button>    
+  `;
+  });
+  $(".projects").html(htmlElements);
 }
 
 function checkBlockActive() {

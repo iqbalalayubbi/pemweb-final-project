@@ -80,8 +80,11 @@ h6 {
 }
 
 /* navbar */
-.main {
+main {
   margin-top: 2em;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .icon {
@@ -106,7 +109,7 @@ nav {
   box-shadow: 10px 0px 10px -15px rgba(0, 0, 0, 0.75);
 }
 nav .profile {
-  margin-top: 2em;
+  margin-top: 0.5em;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -131,11 +134,17 @@ h1.title {
   text-align: center;
 }
 
+.search-project {
+  border-radius: 1em;
+  margin-bottom: 1em;
+  text-indent: 1em;
+}
+
 .projects {
   display: flex;
   flex-direction: column;
   align-items: center;
-  height: 200px;
+  max-height: 200px;
   overflow-y: scroll;
   gap: 1em;
 }
