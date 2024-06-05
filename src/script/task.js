@@ -40,15 +40,41 @@ async function renderBlock() {
 }
 
 function createBlock() {
+  const htmlElements = `
+    <div class="container-popup">
+      <input id="title" class="swal2-input" placeholder="title" type="text">
+      <input id="date" class="swal2-input" placeholder="status" type="date">
+      <div style="display: flex; gap: 0.5em; justify-content: center; margin-top:0.5em">
+          <input type="radio" id="todo" name="status" value="todo">
+          <label for="todo">Todo</label>
+          <input type="radio" id="in-progress" name="status" value="progress">
+          <label for="in-progress">In Progress</label>
+          <input type="radio" id="done" name="status" value="done">
+          <label for="done">Done</label>
+      </div>
+    </div>    
+  `;
   Swal.fire({
     title: "Enter the title project",
-    input: "text",
+    // input: "text",
+    html: htmlElements,
     showCancelButton: true,
     confirmButtonText: "Save",
-  }).then((result) => {
+    preConfirm: function () {
+      return new Promise(function (resolve) {
+        resolve({
+          title: $("#title").val(),
+          deadline: $("#date").val(),
+          status: $("input[name='status']:checked").val(),
+        });
+      });
+    },
+  }).then(async (result) => {
     if (result.isConfirmed) {
-      const blockTitle = result.value;
-      saveBlock(blockTitle);
+      // const blockTitle = result.value.title;
+      // await saveBlock(blockTitle);
+      const blockData = result.value;
+      await saveBlock(blockData);
     }
   });
 }
@@ -69,16 +95,20 @@ async function setActive(e) {
   }
 }
 
-async function saveBlock(blockTitle) {
+async function saveBlock(blockData) {
   await editor.isReady;
   const blocksData = await editor.save();
   const data = {
     blockId: Math.floor(Math.random() * Date.now()).toString(16),
-    blockTitle,
+    blockTitle: blockData.title,
     blocksData: JSON.stringify(blocksData),
     username: $(".username-container").attr("data-username"),
     createdAt: moment().format("YYYY-MM-DD HH-mm-ss"),
+    deadline: blockData.deadline || null,
+    status: blockData.status || "todo",
   };
+
+  // console.log(blockData);
   await editor.configuration.saveBlock(data);
   await editor.clear();
   await updateUI();
@@ -107,12 +137,12 @@ async function updateUI() {
   $(".default-view").css("display", "none");
   allBlock.forEach((block) => {
     htmlElements += `
-      <button class="btn btn-project" role="button" data-blockId=${block.block_id}>
+      <button class="btn btn-project" role="button" data-blockId=${block.block_id} >
           <div class="contents">
               <img src="../assets/tutor-1.svg" alt="" width="20">
               <span class="title">${block.block_title}</span>
           </div>
-          <iconify-icon icon="solar:menu-dots-bold" width="20" height="20" class="setting-project" data-title=${block.block_title} data-blockId=${block.block_id}></iconify-icon>
+          <iconify-icon icon="solar:menu-dots-bold" width="20" height="20" class="setting-project" data-title=${block.block_title} data-blockId=${block.block_id} data-status=${block.status} data-deadline=${block.deadline}></iconify-icon>
       </button>    
     `;
   });
@@ -131,13 +161,15 @@ async function updateBlock() {
   await editor.configuration.updateBlock(data);
 }
 
-async function updateTitle(blockId, blockTitle) {
+async function updateProject(blockId, blockTitle, status, deadline) {
   const data = {
     blockId,
     blockTitle,
     username: $(".username-container").attr("data-username"),
+    status,
+    deadline,
   };
-  await editor.configuration.updateTitle(data);
+  await editor.configuration.updateProject(data);
 }
 
 async function deleteBlock(blockId) {
@@ -152,15 +184,17 @@ async function searchProject() {
   // ambil semua component project
   await updateUI();
   const titleElements = $(".btn-project .contents span");
-  const idElements = $(".btn-project");
+  const btnProject = $(".btn-project");
   const inputVal = $(".search-project").val();
 
   const projectFound = [];
   for (let i = 0; i < titleElements.length; i++) {
     if (titleElements.eq(i).text().toLowerCase().startsWith(inputVal)) {
       const dataProject = {
-        id: idElements.eq(i).attr("data-blockId"),
+        id: btnProject.eq(i).attr("data-blockId"),
         title: titleElements.eq(i).text(),
+        status: btnProject.eq(i).children().last().attr("data-status"),
+        deadline: btnProject.eq(i).children().last().attr("data-deadline"),
       };
       projectFound.push(dataProject);
     }
@@ -181,7 +215,7 @@ async function searchProject() {
             <img src="../assets/tutor-1.svg" alt="" width="20">
             <span class="title">${blockData.title}</span>
         </div>
-        <iconify-icon icon="solar:menu-dots-bold" width="20" height="20" class="setting-project" data-title=${blockData.title} data-blockId=${blockData.id}></iconify-icon>
+        <iconify-icon icon="solar:menu-dots-bold" width="20" height="20" class="setting-project" data-title=${blockData.title} data-blockId=${blockData.id} data-status=${blockData.status} data-deadline=${blockData.deadline}></iconify-icon>
     </button>    
   `;
   });
@@ -191,7 +225,6 @@ async function searchProject() {
 function checkBlockActive() {
   const children = $(".projects").has(".project-active");
   if (children.length > 0) {
-    editor.render(JSON.parse(blocksData.blocks_data));
     $("#editorjs").css("display", "block");
     $(".default-view").css("display", "none");
   } else {
@@ -216,21 +249,91 @@ function confirmLogout(event) {
   });
 }
 
+// console.log(moment("2024-08-05", "YYYYMMDD").fromNow());
+function popupmenuTemplate(blockData) {
+  const statusValue = [
+    {
+      id: "todo",
+      value: "todo",
+      label: "Todo",
+    },
+    {
+      id: "in-progress",
+      value: "progress",
+      label: "In Progress",
+    },
+    {
+      id: "done",
+      value: "done",
+      label: "Done",
+    },
+  ];
+
+  let radiosElemets = ``;
+  for (let i = 0; i < statusValue.length; i++) {
+    if (blockData.status == statusValue[i].value) {
+      radiosElemets += `<input type="radio" id="${statusValue[i].id}" name="status" value="${statusValue[i].value}" checked>
+      <label for="${statusValue[i].id}">${statusValue[i].label}</label>`;
+    } else {
+      radiosElemets += `<input type="radio" id="${statusValue[i].id}" name="status" value="${statusValue[i].value}">
+      <label for="${statusValue[i].id}">${statusValue[i].label}</label>`;
+    }
+  }
+
+  return `
+  <div class="container-popup">
+        <input id="title" class="swal2-input" placeholder="title" type="text" value=${blockData.title}>
+        <input id="date" class="swal2-input" placeholder="status" type="date" value="${blockData.deadline}">
+        <div style="display: flex; gap: 0.5em; justify-content: center; margin-top:0.5em">
+            ${radiosElemets}
+        </div>
+    </div>`;
+  // <input type="radio" id="todo" name="status" value="todo">
+  // <label for="todo">Todo</label>
+  // <input type="radio" id="in-progress" name="status" value="progress">
+  // <label for="in-progress">In Progress</label>
+  // <input type="radio" id="done" name="status" value="done">
+  // <label for="done">Done</label>
+}
+
 function showProjectMenu(event) {
   const blockId = event.target.getAttribute("data-blockId");
   const blockTitle = event.target.getAttribute("data-title");
+  const blockStatus = event.target.getAttribute("data-status");
+  const blockDeadline = event.target.getAttribute("data-deadline");
+
+  const blockData = {
+    id: blockId,
+    title: blockTitle,
+    status: blockStatus,
+    deadline: blockDeadline,
+  };
+
+  console.log(blockData);
 
   Swal.fire({
-    input: "text",
-    inputValue: blockTitle,
+    html: popupmenuTemplate(blockData),
+    // timer: 2000,
+    showCancelButton: false,
+    showConfirmButton: true,
     showDenyButton: true,
-    showCancelButton: true,
-    confirmButtonText: "Change Title",
+    confirmButtonText: "save change",
     denyButtonText: `Remove this project`,
+    preConfirm: function () {
+      return new Promise(function (resolve) {
+        resolve({
+          title: $("#title").val(),
+          deadline: $("#date").val(),
+          status: $("input[name='status']:checked").val(),
+        });
+      });
+    },
   }).then(async (result) => {
+    console.log(result);
     if (result.isConfirmed) {
-      // change title
-      await updateTitle(blockId, result.value);
+      const { title, status, deadline } = result.value;
+      // update project
+      await updateProject(blockId, title, status, deadline);
       await updateUI();
     } else if (result.isDenied) {
       // remove project

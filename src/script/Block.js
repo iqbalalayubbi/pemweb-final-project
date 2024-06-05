@@ -9,7 +9,7 @@ export class Block extends EditorJS {
     configuration.saveBlock = this.saveBlock;
     configuration.getAllBlock = this.getAllBlock;
     configuration.updateBlock = this.updateBlock;
-    configuration.updateTitle = this.updateTitle;
+    configuration.updateProject = this.updateProject;
     configuration.deleteBlock = this.deleteBlock;
     configuration.onChange = updateBlock;
   }
@@ -27,12 +27,13 @@ export class Block extends EditorJS {
   }
 
   async saveBlock(data) {
-    await $.ajax({
+    const result = await $.ajax({
       type: "POST",
       url: "../controller/saveBlock.php",
       data,
       async: true,
     });
+    console.log(result);
   }
 
   async updateBlock(data) {
@@ -46,10 +47,10 @@ export class Block extends EditorJS {
     return result;
   }
 
-  async updateTitle(data) {
+  async updateProject(data) {
     const result = await $.ajax({
       type: "POST",
-      url: "../controller/updateTitle.php",
+      url: "../controller/updateProject.php",
       data,
       async: true,
     });

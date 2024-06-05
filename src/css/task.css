@@ -216,3 +216,42 @@ h1.title {
   transition: all 0.2s ease;
   cursor: pointer;
 }
+
+.container-popup {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1em;
+}
+
+.edit-container {
+  display: flex;
+  justify-content: center;
+  gap: 1em;
+}
+
+.btn-update {
+  background-color: var(--primary);
+  justify-content: center;
+  color: white;
+  text-align: center;
+}
+
+.btn-update:hover {
+  background-color: var(--secondary);
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.btn-delete {
+  background-color: rgb(206, 0, 0);
+  justify-content: center;
+  color: white;
+  text-align: center;
+}
+
+.btn-delete:hover {
+  background-color: rgb(143, 0, 0);
+  transition: all 0.2s ease;
+  cursor: pointer;
+}

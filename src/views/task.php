@@ -40,7 +40,7 @@ $result = $block->getAllBlock($_SESSION["username"]);
                             <img src="../assets/tutor-1.svg" alt="" width="20">
                             <span class="title"><?= $block["block_title"] ?></span>
                         </div>
-                        <iconify-icon icon="solar:menu-dots-bold" width="20" height="20" class="setting-project" data-title="<?= $block["block_title"] ?>" data-blockId="<?= $block["block_id"] ?>"></iconify-icon>
+                        <iconify-icon icon="solar:menu-dots-bold" width="20" height="20" class="setting-project" data-title="<?= $block["block_title"] ?>" data-blockId="<?= $block["block_id"] ?>" data-status="<?= $block["status"] ?>" data-deadline="<?= $block["deadline"] ?>"></iconify-icon>
                     </button>
                 <?php endforeach; ?>
             </div>
@@ -54,6 +54,7 @@ $result = $block->getAllBlock($_SESSION["username"]);
             <img src="../assets/icons/logout.svg" alt="" width="15">
             Logout
         </button>
+
     </nav>
 
     <div id="editorjs" class="editorjs-container"></div>
@@ -63,6 +64,19 @@ $result = $block->getAllBlock($_SESSION["username"]);
         <h3>Make and Manage Your Project From Here</h3>
         <p>help anyone for create the best project that can be</p>
     </div>
+
+    <!-- <div class="container-popup">
+        <input id="title" class="swal2-input" placeholder="title" type="text">
+        <input id="date" class="swal2-input" placeholder="status" type="date">
+        <div style="display: flex; gap: 0.5em; justify-content: center; margin-top:0.5em">
+            <input type="radio" id="todo" name="status" value="todo">
+            <label for="todo">Todo</label>
+            <input type="radio" id="in-progress" name="status" value="progress">
+            <label for="in-progress">In Progress</label>
+            <input type="radio" id="done" name="status" value="done">
+            <label for="done">Done</label>
+        </div>
+    </div> -->
 
     <form method="post" id="form-data" class="hidden">
         <input type="hidden" name="blocks" value="">
