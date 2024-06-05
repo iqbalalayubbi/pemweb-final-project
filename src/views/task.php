@@ -25,13 +25,14 @@ $result = $block->getAllBlock($_SESSION["username"]);
 
 <body>
     <nav>
-        <div class="main">
+        <main>
             <div class="icon">Easy Task</div>
             <div class="profile">
                 <img src="../assets/ilustration.svg" alt="" width="50">
                 <span class="username-container" data-username="<?= $_SESSION['username'] ?>"><?= $_SESSION["username"] ?></span>
             </div>
             <h1 class="title">Projects</h1>
+            <input type="text" class="search-project" placeholder="search project">
             <div class="projects">
                 <?php foreach ($result as $block) : ?>
                     <button class="btn btn-project" role="button" data-blockId="<?= $block["block_id"] ?>">
@@ -47,7 +48,7 @@ $result = $block->getAllBlock($_SESSION["username"]);
                 <img src="../assets/icons/add.svg" alt="" width="15">
                 New Projcet
             </button>
-        </div>
+        </main>
 
         <button class="btn btn-logout" role="button">
             <img src="../assets/icons/logout.svg" alt="" width="15">
