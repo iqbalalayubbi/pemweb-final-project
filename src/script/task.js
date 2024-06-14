@@ -1,5 +1,14 @@
 import { Block } from "./Block.js";
 import { tools } from "./configuration.js";
+import { API_KEY } from "./key.js";
+import { GoogleGenerativeAI } from "@google/generative-ai";
+import {
+  getDatetime,
+  getLocaleTime,
+  getFullDate,
+  getFullTime,
+} from "./formatTime.js";
+import { templateBlock } from "./templateElement.js";
 
 $(".btn-project:eq(0)").addClass("project-active");
 
@@ -19,31 +28,89 @@ const editor = new Block(
 window.addEventListener("load", renderBlock);
 
 $(".btn-add").click(createBlock);
-$(".btn-project").click(setActive);
-$(".projects").click(setActive);
+$(".projects").click(clickProject);
 $(".btn-logout").click(confirmLogout);
 $(".search-project").on("input", searchProject);
+$(".btn-ai").click(generateText);
+$(".setting-project").click(showProjectMenu);
+
+async function generateResponseAI(prompt) {
+  const genAI = new GoogleGenerativeAI(API_KEY);
+  const generationConfig = {
+    stopSequences: ["red"],
+    maxOutputTokens: 10,
+    temperature: 0.5,
+    topP: 0.01,
+    topK: 5,
+  };
+
+  const model = genAI.getGenerativeModel(
+    { model: "gemini-1.5-flash" },
+    generationConfig
+  );
+
+  const customPrompt = `${prompt}, jelaskan tanpa format markdown secara singkat usahakan dibawah 3 kalimat.`;
+  const result = await model.generateContent(customPrompt);
+
+  const response = await result.response;
+  const text = response.text();
+  return text;
+}
+
+async function generateText() {
+  await editor.isReady;
+  const currentBlock = editor.blocks.getCurrentBlockIndex();
+  const blockData = editor.blocks.getBlockByIndex(currentBlock);
+  // const newBlock = {
+  //   type: "paragraph",
+  //   data: {
+  //     text: "ini dibuat dengan bantuan ai tanpa kamu ngetik ini bisa terjadi",
+  //   },
+  // };
+  $(".loading-container").css("display", "block");
+  blockData
+    .save()
+    .then(async (config) => {
+      const promptUser = config.data.text;
+      const response = await generateResponseAI(promptUser);
+      const formatResponse = response.replace(/\n/g, "");
+
+      const blockId = config.id;
+      editor.blocks.update(blockId, {
+        text: formatResponse,
+      });
+      await updateBlock();
+    })
+    .finally(() => {
+      $(".loading-container").css("display", "none");
+    });
+}
 
 async function renderBlock() {
   await editor.isReady;
   const blockId = $(".project-active").attr("data-blockId");
   const username = $(".username-container").attr("data-username");
   const blocksData = await editor.configuration.renderBlock(blockId, username);
+
   if (blocksData) {
-    editor.render(JSON.parse(blocksData.blocks_data));
+    const { blocks_data, status } = blocksData;
+    editor.render(JSON.parse(blocks_data));
+    $(".sideNav-env-marker.dev").attr("data-status", status);
     $("#editorjs").css("display", "block");
     $(".default-view").css("display", "none");
   } else {
     $("#editorjs").css("display", "none");
     $(".default-view").css("display", "flex");
   }
+  updateDeadline();
 }
 
 function createBlock() {
+  // <input id="date" class="swal2-input" placeholder="status" type="date">
   const htmlElements = `
-    <div class="container-popup">
+  <div class="container-popup">
       <input id="title" class="swal2-input" placeholder="title" type="text">
-      <input id="date" class="swal2-input" placeholder="status" type="date">
+      <input id="datetime" class="swal2-input" placeholder="status" type="datetime-local">
       <div style="display: flex; gap: 0.5em; justify-content: center; margin-top:0.5em">
           <input type="radio" id="todo" name="status" value="todo">
           <label for="todo">Todo</label>
@@ -64,35 +131,43 @@ function createBlock() {
       return new Promise(function (resolve) {
         resolve({
           title: $("#title").val(),
-          deadline: $("#date").val(),
+          deadline: $("#datetime").val(),
           status: $("input[name='status']:checked").val(),
         });
       });
     },
   }).then(async (result) => {
     if (result.isConfirmed) {
-      // const blockTitle = result.value.title;
-      // await saveBlock(blockTitle);
-      const blockData = result.value;
+      const defaultDeadline = moment().format("YYYY-MM-DD HH-mm-ss");
+      const { title, deadline, status } = result.value;
+      const blockData = {
+        title,
+        deadline: deadline ? getDatetime(deadline) : defaultDeadline,
+        status,
+      };
       await saveBlock(blockData);
     }
   });
 }
 
-async function setActive(e) {
-  // button-project
-  if ($(e.target).hasClass("btn-project")) {
-    for (let i = 0; i < $(".btn-project").length; i++) {
-      $(`.btn-project:eq(${i})`).removeClass("project-active");
-    }
-    $(e.target).addClass("project-active");
-    await renderBlock();
-  }
+function updateDeadline() {
+  const datetime = $(".project-active").attr("data-deadline");
+  $(".date").html(getFullDate(datetime));
+  $(".time").html(getFullTime(datetime));
+}
 
-  // setting menu button
-  if ($(e.target).hasClass("setting-project")) {
-    showProjectMenu(e);
+async function setActive(id) {
+  const btnProject = $(`.btn-project[data-blockId=${id}]`);
+  for (let i = 0; i < $(".btn-project").length; i++) {
+    $(`.btn-project:eq(${i})`).removeClass("project-active");
   }
+  $(btnProject).addClass("project-active");
+  await renderBlock();
+}
+
+async function clickProject(e) {
+  const id = $(e.target.closest(".btn-project")).attr("data-blockId");
+  await setActive(id);
 }
 
 async function saveBlock(blockData) {
@@ -122,10 +197,11 @@ async function saveBlock(blockData) {
   checkBlockActive();
 }
 
-async function updateUI() {
+async function updateUI(id = null) {
   const username = $(".username-container").attr("data-username");
   const result = await editor.configuration.getAllBlock(username);
   const allBlock = JSON.parse(result);
+
   let htmlElements = "";
   if (allBlock.length <= 0) {
     $("#editorjs").css("display", "none");
@@ -136,18 +212,18 @@ async function updateUI() {
   $("#editorjs").css("display", "block");
   $(".default-view").css("display", "none");
   allBlock.forEach((block) => {
-    htmlElements += `
-      <button class="btn btn-project" role="button" data-blockId=${block.block_id} >
-          <div class="contents">
-              <img src="../assets/tutor-1.svg" alt="" width="20">
-              <span class="title">${block.block_title}</span>
-          </div>
-          <iconify-icon icon="solar:menu-dots-bold" width="20" height="20" class="setting-project" data-title=${block.block_title} data-blockId=${block.block_id} data-status=${block.status} data-deadline=${block.deadline}></iconify-icon>
-      </button>    
-    `;
+    const { block_id, block_title, status, deadline } = block;
+    const blockData = {
+      id: block_id,
+      title: block_title,
+      status,
+      deadline,
+    };
+    htmlElements += templateBlock(blockData);
   });
   $(".projects").html(htmlElements);
   checkBlockActive();
+  await setActive(id);
 }
 
 async function updateBlock() {
@@ -183,18 +259,18 @@ async function deleteBlock(blockId) {
 async function searchProject() {
   // ambil semua component project
   await updateUI();
-  const titleElements = $(".btn-project .contents span");
   const btnProject = $(".btn-project");
   const inputVal = $(".search-project").val();
 
   const projectFound = [];
-  for (let i = 0; i < titleElements.length; i++) {
-    if (titleElements.eq(i).text().toLowerCase().startsWith(inputVal)) {
+  for (let i = 0; i < btnProject.length; i++) {
+    const title = btnProject.eq(i).attr("data-title");
+    if (title.toLowerCase().startsWith(inputVal)) {
       const dataProject = {
         id: btnProject.eq(i).attr("data-blockId"),
-        title: titleElements.eq(i).text(),
-        status: btnProject.eq(i).children().last().attr("data-status"),
-        deadline: btnProject.eq(i).children().last().attr("data-deadline"),
+        title,
+        status: btnProject.eq(i).attr("data-status"),
+        deadline: btnProject.eq(i).attr("data-deadline"),
       };
       projectFound.push(dataProject);
     }
@@ -204,21 +280,13 @@ async function searchProject() {
 
   if (projectFound.length <= 0) {
     htmlElements =
-      "<span style='color: red; font-weight: bold;'>Project not found</span>";
+      "<span style='color: red; font-weight: bold; display:flex; justify-content:center;padding-top:2em;'>Project not found</span>";
     return $(".projects").html(htmlElements);
   }
 
-  projectFound.forEach((blockData) => {
-    htmlElements += `
-    <button class="btn btn-project" role="button" data-blockId=${blockData.id}>
-        <div class="contents">
-            <img src="../assets/tutor-1.svg" alt="" width="20">
-            <span class="title">${blockData.title}</span>
-        </div>
-        <iconify-icon icon="solar:menu-dots-bold" width="20" height="20" class="setting-project" data-title=${blockData.title} data-blockId=${blockData.id} data-status=${blockData.status} data-deadline=${blockData.deadline}></iconify-icon>
-    </button>    
-  `;
-  });
+  projectFound.forEach(
+    (blockData) => (htmlElements += templateBlock(blockData))
+  );
   $(".projects").html(htmlElements);
 }
 
@@ -282,38 +350,30 @@ function popupmenuTemplate(blockData) {
 
   return `
   <div class="container-popup">
-        <input id="title" class="swal2-input" placeholder="title" type="text" value=${blockData.title}>
-        <input id="date" class="swal2-input" placeholder="status" type="date" value="${blockData.deadline}">
+        <input id="title" class="swal2-input" placeholder="title" type="text" value='${blockData.title}'>
+        <input id="date" class="swal2-input" placeholder="status" type="datetime-local" value="${blockData.deadline}">
         <div style="display: flex; gap: 0.5em; justify-content: center; margin-top:0.5em">
             ${radiosElemets}
         </div>
     </div>`;
-  // <input type="radio" id="todo" name="status" value="todo">
-  // <label for="todo">Todo</label>
-  // <input type="radio" id="in-progress" name="status" value="progress">
-  // <label for="in-progress">In Progress</label>
-  // <input type="radio" id="done" name="status" value="done">
-  // <label for="done">Done</label>
 }
 
 function showProjectMenu(event) {
-  const blockId = event.target.getAttribute("data-blockId");
-  const blockTitle = event.target.getAttribute("data-title");
-  const blockStatus = event.target.getAttribute("data-status");
-  const blockDeadline = event.target.getAttribute("data-deadline");
+  const projectActive = $(".project-active");
+  const blockId = projectActive.attr("data-blockId");
+  const blockTitle = projectActive.attr("data-title");
+  const blockStatus = projectActive.attr("data-status");
+  const blockDeadline = projectActive.attr("data-deadline");
 
   const blockData = {
     id: blockId,
     title: blockTitle,
     status: blockStatus,
-    deadline: blockDeadline,
+    deadline: getLocaleTime(blockDeadline),
   };
-
-  console.log(blockData);
 
   Swal.fire({
     html: popupmenuTemplate(blockData),
-    // timer: 2000,
     showCancelButton: false,
     showConfirmButton: true,
     showDenyButton: true,
@@ -329,12 +389,12 @@ function showProjectMenu(event) {
       });
     },
   }).then(async (result) => {
-    console.log(result);
     if (result.isConfirmed) {
       const { title, status, deadline } = result.value;
+      const deadlineFormat = getDatetime(deadline);
       // update project
-      await updateProject(blockId, title, status, deadline);
-      await updateUI();
+      await updateProject(blockId, title, status, deadlineFormat);
+      await updateUI(blockId);
     } else if (result.isDenied) {
       // remove project
       await deleteBlock(blockId);

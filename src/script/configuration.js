@@ -1,3 +1,11 @@
+function sendFile(file) {
+  return $.ajax({
+    type: "POST",
+    url: "../controller/uploadFile.php",
+    data: file,
+  });
+}
+
 export const tools = {
   header: {
     class: Header,
@@ -8,10 +16,10 @@ export const tools = {
     },
   },
   list: {
-    class: List,
+    class: NestedList,
     inlineToolbar: true,
     config: {
-      defaultStyle: "unordered",
+      defaultStyle: "ordered",
     },
   },
   checklist: {
@@ -28,7 +36,29 @@ export const tools = {
     },
   },
   raw: RawTool,
-  embed: Embed,
+  embed: {
+    class: Embed,
+    config: {
+      services: {
+        youtube: true,
+        coub: true,
+        pinterest: true,
+        github: true,
+        codepen: {
+          regex: /https?:\/\/codepen.io\/([^\/\?\&]*)\/pen\/([^\/\?\&]*)/,
+          embedUrl:
+            "https://codepen.io/<%= remote_id %>?height=300&theme-id=0&default-tab=css,result&embed-version=2",
+          html: "<iframe height='300' scrolling='no' frameborder='no' allowtransparency='true' allowfullscreen='true' style='width: 100%;'></iframe>",
+          height: 300,
+          width: 600,
+          id: (groups) => groups.join("/embed/"),
+        },
+      },
+    },
+  },
+  Math: {
+    class: EJLaTeX,
+  },
   code: CodeTool,
   AnyButton: {
     class: AnyButton,
