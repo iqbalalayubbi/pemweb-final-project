@@ -1,0 +1,91 @@
+.username{
+    color: #D1D5DB;
+    background-color: white;
+    width: 27%;
+    height: 5%;
+    padding: 0 0 0 20px;
+    position: absolute;
+    top: 38%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: flex;
+    justify-content: left;
+    align-items: center;
+    border: 1px solid #ccc; /*border*/
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+    border-radius: 5px;
+}
+.email{
+    color: #D1D5DB;
+    background-color: white;
+    width: 27%;
+    height: 5%;
+    padding: 0 0 0 20px;
+    position: absolute;
+    top: 45.5%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: flex;
+    justify-content: left;
+    align-items: center;
+    border: 1px solid #ccc; /*border*/
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+    border-radius: 5px;
+}
+
+.gatau{
+    color: #D1D5DB;
+    background-color: white;
+    width: 27%;
+    height: 5%;
+    padding: 0 0 0 20px;
+    position: absolute;
+    top: 53%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: flex;
+    justify-content: left;
+    align-items: center;
+    border: 1px solid #ccc; /*border */
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+    border-radius: 5px;
+}
+
+body{
+    background-color: #EEEEEE;
+}
+
+.save{
+    color: white;
+    background-color: #7469B6;
+    width: 27%;
+    height: 6%;
+    padding: 0 0 0 20px;
+    position: absolute;
+    top: 65%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: 1px solid #ccc; /*border*/
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+    border-radius: 5px;
+    cursor: pointer;
+    z-index: 1; /*biar dia ada diatas elemen yang lain*/
+}
+.round-button {
+    display: block;
+    margin: 50px auto; 
+    max-width: 100%; /*biar fix*/
+    height: auto;
+    width: 150px; /*samain ama tinggi */
+    height: 150px; /*samain ama lebar biar bulet*/
+    border-radius: 50%; /*buat lengkungin sudut*/
+    background-image: url(../assets/foto-profile.svg);
+    color: white;
+    border: none;
+    font-size: 16px;
+    cursor: pointer;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+}
