@@ -43,7 +43,6 @@ export class Block extends EditorJS {
       data,
       async: true,
     });
-
     return result;
   }
 
