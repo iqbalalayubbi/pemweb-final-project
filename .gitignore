@@ -2,3 +2,5 @@ node_modules/
 destroy.php
 key.js
 gemini.html
+src/uploads/*.*
+!src/uploads/no-image.png

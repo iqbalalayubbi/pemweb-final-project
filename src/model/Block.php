@@ -5,6 +5,7 @@ class Block extends Connection
     public function saveBlockData($blockData)
     {
         $block_id =  $blockData["blockId"];
+        $id_user = $blockData["userId"];
         $block_title =  $blockData["blockTitle"];
         $blocks_data =  $blockData["blocksData"];
         $username =  $blockData["username"];
@@ -16,7 +17,7 @@ class Block extends Connection
             if ($this->checkBlock($block_id) > 0) {
                 $this->updateBlock($blockData);
             } else {
-                $result = $this->executeQuery("INSERT INTO block(block_id, block_title, blocks_data, username, created_at, status, deadline) VALUES ('$block_id', '$block_title', '$blocks_data' ,'$username', '$created_at', '$status', '$deadline')");
+                $result = $this->executeQuery("INSERT INTO block(block_id, block_title, blocks_data, username, created_at, status, deadline, id_user) VALUES ('$block_id', '$block_title', '$blocks_data' ,'$username', '$created_at', '$status', '$deadline', '$id_user')");
                 return $result->rowCount();
             }
         } catch (\Throwable $th) {

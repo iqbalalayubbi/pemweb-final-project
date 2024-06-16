@@ -9,25 +9,21 @@ class User extends Connection
     public function createUser($username, $password)
     {
         $usernameExist = $this->checkUsername($username);
-        if (!$usernameExist) {
-            $hashPassword = password_hash($password, PASSWORD_DEFAULT);
-            $result = $this->executeQuery("INSERT INTO user (username, password) VALUES ('$username', '$hashPassword')");
-            return $result->rowCount();
-        } else {
-            return false;
+        $userId = uniqid("user-", true);
+        try {
+            if (!$usernameExist) {
+                $hashPassword = password_hash($password, PASSWORD_DEFAULT);
+                $result = $this->executeQuery("INSERT INTO user (id, username, password) VALUES ('$userId', '$username', '$hashPassword')");
+                return $result->rowCount();
+            } else return false;
+        } catch (\Throwable $th) {
+            return $th->getMessage();
         }
     }
 
-    public function getData()
+    public function checkUsername($username, $id = null)
     {
-        $query = $this->pdo->query("SELECT * FROM t2");
-        $query->execute();
-        return $query->fetchAll();
-    }
-
-    public function checkUsername($username)
-    {
-        $result = $this->executeQuery("SELECT * FROM user WHERE username = '$username'");
+        $result = $this->executeQuery("SELECT * FROM user WHERE username = '$username' AND id != '$id'");
         return $result->rowCount() > 0 ? true : false;
     }
 
@@ -35,10 +31,65 @@ class User extends Connection
     {
         $result = $this->executeQuery("SELECT * FROM user WHERE username = '$username'");
         $user = $result->fetch(PDO::FETCH_ASSOC);
-        if (password_verify($password, $user["password"])) {
-            return true;
-        } else {
-            return false;
+        if (password_verify($password, $user["password"])) return $user;
+        else return false;
+    }
+
+    public function uploadImage($filename, $username)
+    {
+        $result = $this->executeQuery("UPDATE user SET image = '$filename' WHERE username = '$username'");
+        return $result->rowCount();
+    }
+
+    public function getImage($username)
+    {
+        $result = $this->executeQuery("SELECT image FROM user WHERE username = '$username'");
+        return $result->fetch(PDO::FETCH_ASSOC)["image"];
+    }
+
+    public function updateUser($id, $username, $email, $password)
+    {
+        $usernameExist = $this->checkUsername($username, $id);
+        try {
+            if ($usernameExist)  trigger_error("username already exists");
+            else {
+                if ($username) $this->updateUsername($id, $username);
+                if ($email) $this->updateEmail($id, $email);
+                if ($password) $this->updatePassword($id, $password);
+            }
+        } catch (\Throwable $th) {
+            echo $th->getMessage();
+        }
+    }
+
+    public function updatePassword($id, $password)
+    {
+        try {
+            $hashPassword = password_hash($password, PASSWORD_DEFAULT);
+            $result = $this->executeQuery("UPDATE user SET password = '$hashPassword' WHERE id = '$id'");
+            return $result->rowCount();
+        } catch (\Throwable $th) {
+            return $th->getMessage();
+        }
+    }
+
+    public function updateUsername($id, $username)
+    {
+        try {
+            $result = $this->executeQuery("UPDATE user SET username = '$username' WHERE id = '$id'");
+            return $result->rowCount();
+        } catch (\Throwable $th) {
+            return $th->getMessage();
+        }
+    }
+
+    public function updateEmail($id, $email)
+    {
+        try {
+            $result = $this->executeQuery("UPDATE user SET email = '$email' WHERE id = '$id'");
+            return $result->rowCount();
+        } catch (\Throwable $th) {
+            return $th->getMessage();
         }
     }
 }

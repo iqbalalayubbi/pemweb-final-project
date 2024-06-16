@@ -4,11 +4,13 @@ session_start();
 if (!isset($_SESSION["username"])) {
     header("Location:../views/login.php");
 }
-// get all blocks from database
+
 require_once "../model/Connection.php";
 require_once "../model/Block.php";
 $block = new Block();
 $result = $block->getAllBlock($_SESSION["username"]);
+$image = $_SESSION["image"] ? $_SESSION["image"] : "no-image.png";
+
 ?>
 
 
@@ -34,9 +36,7 @@ $result = $block->getAllBlock($_SESSION["username"]);
     <div class="sideNav">
         <div class="sideNav-header">
             <div class="sideNav-header-settings">
-                <div class="sideNav-header-title">
-                    <div class="sideNav-header-title-team">Easy Task</div>
-                </div>
+                <img src="../uploads/<?= $image ?>" alt="" width="80" onclick="window.location.href = 'profile.php'">
                 <div class="sideNav-header-title-user username-container" data-username="<?= $_SESSION['username'] ?>">@<?= $_SESSION["username"] ?></div>
             </div>
         </div>
@@ -54,17 +54,11 @@ $result = $block->getAllBlock($_SESSION["username"]);
                     </div>
                 </a>
             <?php endforeach; ?>
-
-
         </div>
-        <div style="display: flex; flex-direction: column; align-items: center; margin-top: 2em; gap:2em;">
+        <div style="display: flex; flex-direction: column; align-items: center; margin-top: 1em; gap:1em;">
             <a class="sideNav-tab-container btn-add">
-                <div class=" sideNav-tab">
-                    <div class="sideNav-tab-icon-container">
-                        <iconify-icon class="sideNav-tab-icon--dashboard" icon="majesticons:plus" style="display: inline-block; user-select: none; vertical-align: text-top;" width="15"></iconify-icon>
-                    </div>
-                    <div class="sideNav-tab-title">New Project</div>
-                </div>
+                <iconify-icon class="sideNav-tab-icon--dashboard" icon="majesticons:plus" width="15"></iconify-icon>
+                <span>New Project</span>
             </a>
             <!-- button ask ai -->
             <button class="Btn btn-ai">
@@ -192,6 +186,7 @@ $result = $block->getAllBlock($_SESSION["username"]);
         <!-- <button type="button" name="button" onclick="sendData()">Save Data</button> -->
     </form>
 
+    <!-- jquery -->
     <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
     <!-- editor js files -->
     <script src="../library/editorjs.js"></script>

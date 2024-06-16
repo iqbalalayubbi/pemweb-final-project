@@ -107,36 +107,29 @@ a {
 
 /* HEADER STYLE */
 .sideNav-header {
-  height: 40px;
   padding: 15px;
   cursor: pointer;
-  margin-bottom: 2.5em;
-}
-.sideNav-header:hover {
-  background-color: #2b2d3c;
+  margin-top: 2em;
 }
 
 .sideNav-header-settings {
-  display: inline-block;
-  vertical-align: top;
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5em;
 }
-.sideNav-header-title {
-  display: inline-block;
-  height: 100%;
-  line-height: 1.3;
+
+.sideNav-header-settings img:hover {
+  filter: brightness(80%);
 }
-.sideNav-header-title-team {
-  font-size: 18px;
-  font-weight: 700;
-  color: #fafafa;
-  max-width: 158px;
-  display: inline-block;
-}
+
 .sideNav-header-title-user {
-  font-size: 15px;
+  font-size: 1em;
   font-weight: 500;
   color: #c3c4c8;
-  max-width: 158px;
+  width: 100%;
+  text-align: center;
 }
 
 /* ENVIRONMENT STYLE */
@@ -159,6 +152,12 @@ a {
 }
 .sideNav-env .sideNav-env-marker.dev:after {
   content: attr(data-status);
+}
+.sideNav-section-dashboard {
+  height: 100px;
+  overflow-y: scroll;
+  border-bottom: 1px solid #535672;
+  border-top: 1px solid #535672;
 }
 
 /* CONTAINERS STYLE */
@@ -194,6 +193,12 @@ a {
 
 .btn-add {
   background-color: var(--darkOne);
+  display: flex;
+  font-family: sans-serif;
+  justify-content: center;
+  align-items: center;
+  gap: 1em;
+  padding: 0.5em 1em;
 }
 .btn-add:hover {
   background-color: var(--darkHover);

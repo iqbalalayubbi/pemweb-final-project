@@ -2,7 +2,7 @@
 
 class Connection
 {
-    private $dsn = 'mysql:host=localhost;dbname=json-data';
+    private $dsn = 'mysql:host=localhost;dbname=easy-task';
     private $username = 'root';
     private $password = '';
     public $pdo;
@@ -25,8 +25,6 @@ class Connection
     public function executeQuery($sql)
     {
         $query = $this->pdo->query($sql);
-        // $query->execute();
-        // return $query;
         return $query;
     }
 }
