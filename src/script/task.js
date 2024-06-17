@@ -33,6 +33,19 @@ $(".btn-logout").click(confirmLogout);
 $(".search-project").on("input", searchProject);
 $(".btn-ai").click(generateText);
 $(".setting-project").click(showProjectMenu);
+$("input[name='filter-status']").on("change", filterStatus);
+
+async function filterStatus(event) {
+  const statusTask = event.target.value;
+  const username = $(".username-container").attr("data-username");
+  if (statusTask !== "all") {
+    const blocksData = await editor.configuration.getBlockByStatus(
+      username,
+      statusTask
+    );
+    await updateUI(null, blocksData);
+  } else await updateUI();
+}
 
 async function generateResponseAI(prompt) {
   const genAI = new GoogleGenerativeAI(API_KEY);
@@ -154,6 +167,20 @@ function updateDeadline() {
   const datetime = $(".project-active").attr("data-deadline");
   $(".date").html(getFullDate(datetime));
   $(".time").html(getFullTime(datetime));
+  const taskStatus = $(".sideNav-env-marker.dev").attr("data-status");
+  let statusBg = "#bc3c0e";
+  switch (taskStatus) {
+    case "todo":
+      statusBg = "#bc3c0e";
+      break;
+    case "progress":
+      statusBg = "#b9bc0e";
+      break;
+    default:
+      statusBg = "#0ebc34";
+      break;
+  }
+  $(".sideNav-env-marker.dev").css("background-color", statusBg);
 }
 
 async function setActive(id) {
@@ -197,10 +224,10 @@ async function saveBlock(blockData) {
   checkBlockActive();
 }
 
-async function updateUI(id = null) {
+async function updateUI(id = null, blocksData = null) {
   const username = $(".username-container").attr("data-username");
   const result = await editor.configuration.getAllBlock(username);
-  const allBlock = JSON.parse(result);
+  const allBlock = JSON.parse(blocksData) || JSON.parse(result);
 
   let htmlElements = "";
   if (allBlock.length <= 0) {
