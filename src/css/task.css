@@ -148,7 +148,9 @@ a {
   color: white;
 }
 .sideNav-env .sideNav-env-marker.dev {
-  background: #0ebc34;
+  /* background: #0ebc34; */
+  /* background: #b9bc0e; */
+  /* background: #bc3c0e; */
 }
 .sideNav-env .sideNav-env-marker.dev:after {
   content: attr(data-status);

@@ -22,7 +22,9 @@ $icons = []
         <div class="mt-24 flex flex-col items-center gap-3 relative h-3/5">
             <h1 class="text-5xl font-extrabold text-center leading-snug">Make Your Task Easier <br>With <span class="text-purple-600 px-2">Easy Task</span> </h1>
             <p class="text-center text-lg">manage your task <br> that can be easy in one application</p>
-            <button class="btn-primary mt-5">Manage Task Now</button>
+            <a href="../views/register.php" class="mt-5">
+                <button class="btn-primary">Manage Task Now</button>
+            </a>
             <img src="../assets/ilustration.svg" alt="" class="absolute left-0 bottom-0">
             <img src="../assets/ilustration-1.svg" alt="" class="absolute right-0 top-0">
         </div>

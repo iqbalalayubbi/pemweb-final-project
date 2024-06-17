@@ -154,6 +154,20 @@ function updateDeadline() {
   const datetime = $(".project-active").attr("data-deadline");
   $(".date").html(getFullDate(datetime));
   $(".time").html(getFullTime(datetime));
+  const taskStatus = $(".sideNav-env-marker.dev").attr("data-status");
+  let statusBg = "#bc3c0e";
+  switch (taskStatus) {
+    case "todo":
+      statusBg = "#bc3c0e";
+      break;
+    case "progress":
+      statusBg = "#b9bc0e";
+      break;
+    default:
+      statusBg = "#0ebc34";
+      break;
+  }
+  $(".sideNav-env-marker.dev").css("background-color", statusBg);
 }
 
 async function setActive(id) {
