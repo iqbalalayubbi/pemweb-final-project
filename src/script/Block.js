@@ -11,8 +11,21 @@ export class Block extends EditorJS {
     configuration.updateBlock = this.updateBlock;
     configuration.updateProject = this.updateProject;
     configuration.deleteBlock = this.deleteBlock;
+    configuration.getBlockByStatus = this.getBlockByStatus;
     configuration.onChange = updateBlock;
   }
+
+  async getBlockByStatus(username, status) {
+    const data = await $.ajax({
+      type: "GET",
+      url: "../controller/getBlockByStatus.php",
+      data: { username, status },
+      async: true,
+    });
+
+    return data;
+  }
+
   async renderBlock(blockId, username) {
     const data = await $.ajax({
       type: "GET",

@@ -43,6 +43,23 @@ $image = $_SESSION["image"] ? $_SESSION["image"] : "no-image.png";
         <div class="sideNav-env">
             <div class="sideNav-env-marker dev"></div>
         </div>
+        <div style="display: flex; justify-content:center; align-items:center; color:white; gap:0.5em;">
+            <div style="font-size: 0.5em;">
+                <input type="radio" id="todo" name="filter-status" value="todo">
+                <label for="todo">Todo</label>
+            </div>
+            <div style="font-size: 0.5em;">
+                <input type="radio" id="progress" name="filter-status" value="progress">
+                <label for="progress">Progress</label>
+            </div>
+            <div style="font-size: 0.5em;">
+                <input type="radio" id="done" name="filter-status" value="done">
+                <label for="done">Done</label>
+            </div>
+            <div>
+                <input type="radio" id="all" name="filter-status" value="all">
+            </div>
+        </div>
         <div class="sideNav-section-dashboard projects">
             <?php foreach ($result as $block) : ?>
                 <a class="sideNav-tab-container btn-project" data-blockId="<?= $block["block_id"] ?>" data-title="<?= $block["block_title"] ?>" data-status="<?= $block["status"] ?>" data-deadline="<?= $block["deadline"] ?>">

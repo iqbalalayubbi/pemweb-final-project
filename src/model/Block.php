@@ -108,4 +108,14 @@ class Block extends Connection
             return $th->getMessage();
         }
     }
+
+    public function getBlockByStatus($username, $status)
+    {
+        try {
+            $result = $this->executeQuery("SELECT * FROM block WHERE username = '$username' AND status='$status' ORDER BY created_at ASC");
+            return $result->fetchAll(PDO::FETCH_ASSOC);
+        } catch (\Throwable $th) {
+            return $th->getMessage();
+        }
+    }
 }

@@ -109,7 +109,7 @@ a {
 .sideNav-header {
   padding: 15px;
   cursor: pointer;
-  margin-top: 2em;
+  margin-top: 1em;
 }
 
 .sideNav-header-settings {
@@ -156,7 +156,8 @@ a {
   content: attr(data-status);
 }
 .sideNav-section-dashboard {
-  height: 100px;
+  margin-top: 0.5em;
+  height: 150px;
   overflow-y: scroll;
   border-bottom: 1px solid #535672;
   border-top: 1px solid #535672;
@@ -350,7 +351,7 @@ a {
   border-top: 1px solid rgba(255, 255, 255, 0.1);
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
   width: calc(100% - 20px);
-  padding: 15px 0;
+  padding: 0.3em 0;
   margin: 0 10px;
 }
 
@@ -374,7 +375,7 @@ a {
   display: inline-block;
 }
 .clock-container .clock .date-time .time {
-  font-size: 20px;
+  font-size: 1em;
 }
 
 .clock-container .clock .date-time:after {
@@ -383,7 +384,7 @@ a {
 }
 
 .clock-container .clock .date-time .date {
-  font-size: 16px;
+  font-size: 0.8em;
 }
 
 .setting-project {
